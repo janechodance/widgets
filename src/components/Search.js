@@ -2,10 +2,11 @@ import React from "react";
 import axios from "axios";
 import {useState, useEffect} from 'react'
 function Search(){
-    const [searchTerm, setSearchTerm] = useState('')
+    const [searchTerm, setSearchTerm] = useState('pasta')
+    const [results, setResults] = useState([])
     useEffect(()=>{
         const search = async () =>{
-            await axios.get('https://en.wikipedia.org/w/api.php',{
+            const {data} = await axios.get('https://en.wikipedia.org/w/api.php',{
                 params:{
                     action: 'query',
                     list: 'search',
@@ -13,10 +14,44 @@ function Search(){
                     format: 'json',
                     srsearch: searchTerm
                 }
-            })
+            });
+            setResults(data.query.search)
         };
-        search()
+        if (searchTerm && !results.length){
+            search();
+        }else {
+            const timeoutId = setTimeout(()=>{
+                if (searchTerm){
+                    search();
+                }
+            },500);
+            return ()=> {
+                clearTimeout(timeoutId)
+            };
+        };
+       
+        
     }, [searchTerm])
+    const renderedResults = results.map((result)=>{
+        return(
+            <div key={result.pageid} className="item">
+                <div className="right floated content">
+                    <a className="ui button"
+                       href={`http://en.wikipedia.org?curid=${result.pageid}`}
+                    >
+                        Go
+                        </a>
+                </div>
+                <div className="content">
+                    <div className="header">
+                        {result.title}
+                    </div>
+                    <span dangerouslySetInnerHTML={{__html: result.snippet}}></span>
+                    
+                </div>
+            </div>
+        )
+    })
     return(
         <div>
             <div className="ui form">
@@ -26,6 +61,9 @@ function Search(){
                     value={searchTerm} 
                     onChange={(e)=>setSearchTerm(e.target.value)}/>
                 </div>
+            </div>
+            <div className="ui celled list">
+                {renderedResults}
             </div>
         </div>
     )
