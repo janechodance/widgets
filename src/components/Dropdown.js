@@ -1,11 +1,21 @@
 import React, { useEffect } from "react";
-import {useState} from 'react';
+import {useState, useRef} from 'react';
 function Dropdown({options, selected, onSelectedChange}){
-    useEffect(()=>{
-        document.body.addEventListener('click', ()=>{
-            setDropdown(false)
-        },{capture: true});
-    },[])
+    useEffect(() => {
+        const onBodyClick = (event) => {
+          if (ref.current.contains(event.target)) {
+            return;
+          }
+          setDropdown(false);
+        };
+        document.body.addEventListener("click", onBodyClick, { capture: true });
+     
+        return () => {
+          document.body.removeEventListener("click", onBodyClick, {
+            capture: true,
+          });
+        };
+      }, []);
     const renderedOptions = options.map((option)=>{
         if (option.value === selected.value){
             return null;
@@ -17,8 +27,9 @@ function Dropdown({options, selected, onSelectedChange}){
         );
     })
     const [dropdown, setDropdown] = useState(false)
+    const ref = useRef()
 return(
-    <div className="ui form">
+    <div ref={ref} className="ui form">
       <div className="field">
           <label className="label">Select a Color</label>
           <div onClick={()=> setDropdown(!dropdown)}
