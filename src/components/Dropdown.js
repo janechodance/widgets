@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import {useState, useRef} from 'react';
-function Dropdown({options, selected, onSelectedChange}){
+function Dropdown({options, selected, onSelectedChange, label}){
     useEffect(() => {
         const onBodyClick = (event) => {
           if (ref.current.contains(event.target)) {
@@ -31,7 +31,7 @@ function Dropdown({options, selected, onSelectedChange}){
 return(
     <div ref={ref} className="ui form">
       <div className="field">
-          <label className="label">Select a Color</label>
+          <label className="label">{label}</label>
           <div onClick={()=> setDropdown(!dropdown)}
           className={`ui selection dropdown ${dropdown? 'visible active' : ''}`}>
               <i className="dropdown icon"></i>
