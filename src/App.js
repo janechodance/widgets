@@ -5,7 +5,7 @@ import Dropdown from "./components/Dropdown";
 import Route from "./components/Route";
 import Search from "./components/Search";
 import Translate from "./components/Translate";
-
+import Header from "./components/Header";
 const items = [
     {
         title: 'What is React?',
@@ -40,6 +40,7 @@ function App(){
     
     return(
         <div>
+            <Header/>
             <Route path="/">
                 <Accordion items={items}/>
             </Route>
